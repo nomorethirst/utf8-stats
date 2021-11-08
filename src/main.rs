@@ -1,16 +1,14 @@
 extern crate clap;
 use clap::{Arg, App};
-use std::env;
 use std::fs;
 use std::path::Path;
 use std::process::exit;
 use core::fmt::Write;
 use unicode_segmentation::UnicodeSegmentation;
-// use std::io::{BufRead, BufReader};
 use std::collections::HashMap;
 
 fn main() {
-    let matches = App::new("utf8-stats")
+    let args = App::new("utf8-stats")
                           .version("1.0")
                           .author("nomorethirst <nomorethirst@users.noreply.github.com>")
                           .about("Prints statistics of utf8 graphemes, chars, charsets, etc.")
@@ -24,26 +22,10 @@ fn main() {
                                .help("Sets the level of verbosity"))
                           .get_matches();
     
-    let filename = matches.value_of("FILENAME").unwrap();
-    let (v, vv, vvv) = set_verbosity(matches.occurrences_of("v"));
+    let filename = args.value_of("FILENAME").unwrap();
+    let (v, _vv, vvv) = set_verbosity(args.occurrences_of("v"));
 
-    // let args: Vec<String> = env::args().collect();
-    // if args.len() < 2 {
-    //     println!("Are you missing the filename argument?");
-    //     println!("usage: utf8-stats <filename>");
-    //     exit(1);
-    // }
-    // let path = Path::new(&args[1]);
-    // let contents = match fs::read_to_string(path) {
-    //     Err(e) => {
-    //         println!("error - could not open {}", path.display());
-    //         println!("{}\nusage: utf8-stats <filename>", e);
-    //         exit(1);
-    //     },
-    //     Ok(f) => f,
-    // };
     let contents = get_file_contents(filename);
-    let verbose: bool = false;
 
     let mut grapheme_counts: HashMap<&str, u32> = HashMap::new();
     let mut num_graphemes: u32 = 0;
@@ -114,14 +96,15 @@ fn get_file_contents(filename: &str) -> String {
         },
         Ok(f) => f,
     };
-    return contents;
+    contents
 }
 
 fn set_verbosity(num_v: u64) -> (bool, bool, bool) {
     match num_v {
-        0 => return (false, false, false),
-        1 => return (true, false, false),
-        2 => return (true, true, false),
-        3 | _ => return (true, true, true),
+        0 => (false, false, false),
+        1 => (true, false, false),
+        2 => (true, true, false),
+        // Three or more v's equals ultimate verbosity
+        _ => (true, true, true),
     }
 }
