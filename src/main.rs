@@ -12,7 +12,7 @@ use std::collections::HashMap;
 fn main() {
     let matches = App::new("utf8-stats")
                           .version("1.0")
-                          .author("Danny Smith <nomorethirst@gmail.com>")
+                          .author("nomorethirst <nomorethirst@users.noreply.github.com>")
                           .about("Prints statistics of utf8 graphemes, chars, charsets, etc.")
                           .arg(Arg::with_name("FILENAME")
                                .help("Sets the input file to use")
